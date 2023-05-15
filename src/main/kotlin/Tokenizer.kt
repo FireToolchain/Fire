@@ -2,72 +2,72 @@ data class Tokens(val list: List<Token>)
 data class Token(val type: TokenType, val line: Int, val column: Int, val width: Int)
 sealed interface TokenType {
     // Grouping symbols
-    object OpenParen : TokenType
-    object CloseParen : TokenType
-    object OpenBracket : TokenType
-    object CloseBracket : TokenType
-    object OpenBrace : TokenType
-    object CloseBrace : TokenType
+    data object OpenParen : TokenType
+    data object CloseParen : TokenType
+    data object OpenBracket : TokenType
+    data object CloseBracket : TokenType
+    data object OpenBrace : TokenType
+    data object CloseBrace : TokenType
 
     // Operators
-    object LessThan : TokenType
-    object GreaterThan : TokenType
-    object GreaterEqual : TokenType
-    object LessEqual : TokenType
-    object NotEqual : TokenType
-    object Equal : TokenType
-    object Plus : TokenType
-    object Minus : TokenType
-    object Multiply : TokenType
-    object Divide : TokenType
-    object Remainder : TokenType
-    object Concat : TokenType
-    object BoolOr : TokenType
-    object BoolAnd : TokenType
-    object BoolNot : TokenType
-    object Arrow : TokenType
+    data object LessThan : TokenType
+    data object GreaterThan : TokenType
+    data object GreaterEqual : TokenType
+    data object LessEqual : TokenType
+    data object NotEqual : TokenType
+    data object Equal : TokenType
+    data object Plus : TokenType
+    data object Minus : TokenType
+    data object Multiply : TokenType
+    data object Divide : TokenType
+    data object Remainder : TokenType
+    data object Concat : TokenType
+    data object BoolOr : TokenType
+    data object BoolAnd : TokenType
+    data object BoolNot : TokenType
+    data object Arrow : TokenType
 
 
     // Structure
-    object Assign : TokenType
-    object PlusAssign : TokenType
-    object MinusAssign : TokenType
-    object MultiplyAssign : TokenType
-    object DivideAssign : TokenType
-    object RemainderAssign : TokenType
-    object ConcatAssign : TokenType
-    object Colon : TokenType
-    object Comma : TokenType
-    object Dot : TokenType
-    object Semicolon : TokenType
-    class Annotation(val str: kotlin.String) : TokenType
+    data object Assign : TokenType
+    data object PlusAssign : TokenType
+    data object MinusAssign : TokenType
+    data object MultiplyAssign : TokenType
+    data object DivideAssign : TokenType
+    data object RemainderAssign : TokenType
+    data object ConcatAssign : TokenType
+    data object Colon : TokenType
+    data object Comma : TokenType
+    data object Dot : TokenType
+    data object Semicolon : TokenType
+    data class Annotation(val str: kotlin.String) : TokenType
 
     // Keywords
-    object MutableLet : TokenType
-    object ImmutableLet : TokenType
-    object Function : TokenType
-    object Process : TokenType
-    object If : TokenType
-    object Else : TokenType
-    object Return : TokenType
-    object Struct : TokenType
-    object Private : TokenType
-    object Impl : TokenType
-    object For : TokenType
-    object While : TokenType
-    object Enum : TokenType
-    object Trait : TokenType
-    object Import : TokenType
-    object Where : TokenType
+    data object MutableLet : TokenType
+    data object ImmutableLet : TokenType
+    data object Function : TokenType
+    data object Process : TokenType
+    data object If : TokenType
+    data object Else : TokenType
+    data object Return : TokenType
+    data object Struct : TokenType
+    data object Private : TokenType
+    data object Impl : TokenType
+    data object For : TokenType
+    data object While : TokenType
+    data object Enum : TokenType
+    data object Trait : TokenType
+    data object Import : TokenType
+    data object Where : TokenType
 
 
     // Values
-    class Ident(val str: kotlin.String) : TokenType
-    class Int(val num: kotlin.Int) : TokenType
-    class Num(val num: Float) : TokenType
-    class String(val str: kotlin.String) : TokenType
-    object True : TokenType
-    object False : TokenType
+    data class Ident(val str: kotlin.String) : TokenType
+    data class Int(val num: kotlin.Int) : TokenType
+    data class Num(val num: Float) : TokenType
+    data class String(val str: kotlin.String) : TokenType
+    data object True : TokenType
+    data object False : TokenType
 
 }
 fun tokenize(str: String): Tokens {
@@ -126,10 +126,24 @@ fun tokenize(str: String): Tokens {
                         continue
                     }
                     '/' -> {
-                        TODO("Line comment")
+                        while (index < str.length && str[index] != '\n') index++
                     }
                     '*' -> {
-                        TODO("Block comment")
+                        index++; column++
+                        while (index < str.length) {
+                            if (str[index] == '*' && index + 1 < str.length && str[index+1] == '/') {
+                                index += 2
+                                column += 2
+                                break
+                            } else if (str[index] == '\n') {
+                                index++
+                                column = 0
+                                line++
+                            } else {
+                                index++; column++
+                            }
+                        }
+                        continue
                     }
                     else -> list.add(Token(TokenType.Divide, line, column, 1))
                 }
@@ -206,7 +220,31 @@ fun tokenize(str: String): Tokens {
                     s += str[index]
                     index++; column++
                 }
-                list.add(Token(TokenType.Ident(s), line, xPos, column - xPos))
+                when (s) {
+                    "let" -> if (index < str.length && str[index] == '!') {
+                        index++; column++
+                        list.add(Token(TokenType.ImmutableLet, line, xPos, column - xPos))
+                    } else {
+                        list.add(Token(TokenType.MutableLet, line, xPos, column - xPos))
+                    }
+                    "fn" -> list.add(Token(TokenType.Function, line, xPos, column - xPos))
+                    "proc" -> list.add(Token(TokenType.Process, line, xPos, column - xPos))
+                    "if" -> list.add(Token(TokenType.If, line, xPos, column - xPos))
+                    "else" -> list.add(Token(TokenType.Else, line, xPos, column - xPos))
+                    "for" -> list.add(Token(TokenType.For, line, xPos, column - xPos))
+                    "while" -> list.add(Token(TokenType.While, line, xPos, column - xPos))
+                    "return" -> list.add(Token(TokenType.Return, line, xPos, column - xPos))
+                    "where" -> list.add(Token(TokenType.Where, line, xPos, column - xPos))
+                    "struct" -> list.add(Token(TokenType.Struct, line, xPos, column - xPos))
+                    "trait" -> list.add(Token(TokenType.Trait, line, xPos, column - xPos))
+                    "impl" -> list.add(Token(TokenType.Impl, line, xPos, column - xPos))
+                    "private" -> list.add(Token(TokenType.Private, line, xPos, column - xPos))
+                    "enum" -> list.add(Token(TokenType.Enum, line, xPos, column - xPos))
+                    "import" -> list.add(Token(TokenType.Import, line, xPos, column - xPos))
+                    "true" -> list.add(Token(TokenType.True, line, xPos, column - xPos))
+                    "false" -> list.add(Token(TokenType.False, line, xPos, column - xPos))
+                    else -> list.add(Token(TokenType.Ident(s), line, xPos, column - xPos))
+                }
                 continue
             }
             char.isDigit() -> {
@@ -234,6 +272,7 @@ fun tokenize(str: String): Tokens {
                 continue
             }
             char == '"' || char == '\'' -> {
+                val xPos = column
                 var s = ""
                 var escape = false
                 index++; column++
@@ -242,6 +281,7 @@ fun tokenize(str: String): Tokens {
                     if (escape) {
                         s += when (c) {
                             '\\' -> '\\'
+                            '$' -> "\\$"
                             'n' -> '\n'
                             'r' -> '\r'
                             't' -> '\t'
@@ -250,11 +290,17 @@ fun tokenize(str: String): Tokens {
                         }
                         escape = false
                     } else {
-
+                        when (c) {
+                            '\\' -> escape = true
+                            char -> break
+                            else -> s += c
+                        }
                     }
                     index++; column++
                 }
                 list.add(Token(TokenType.String(s), line, xPos, column - xPos))
+                index++; column++
+                continue
             }
             char == '\n' -> {
                 column = 0

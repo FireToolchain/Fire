@@ -76,46 +76,54 @@ fun tokenize(str: String): Tokens {
     var column = 0
     var index = 0
     while (index < str.length) {
-        when (str[index]) {
-            '(' -> list.add(Token(TokenType.OpenParen, line, column, 1))
-            ')' -> list.add(Token(TokenType.CloseParen, line, column, 1))
-            '[' -> list.add(Token(TokenType.OpenBracket, line, column, 1))
-            ']' -> list.add(Token(TokenType.CloseBracket, line, column, 1))
-            '{' -> list.add(Token(TokenType.OpenBrace, line, column, 1))
-            '}' -> list.add(Token(TokenType.CloseBrace, line, column, 1))
-            ',' -> list.add(Token(TokenType.Comma, line, column, 1))
-            '.' -> list.add(Token(TokenType.Dot, line, column, 1))
-            '+' -> if (index + 1 < str.length && str[index + 1] == '=') {
+        val char = str[index]
+        when {
+            char == '(' -> list.add(Token(TokenType.OpenParen, line, column, 1))
+            char == ')' -> list.add(Token(TokenType.CloseParen, line, column, 1))
+            char == '[' -> list.add(Token(TokenType.OpenBracket, line, column, 1))
+            char == ']' -> list.add(Token(TokenType.CloseBracket, line, column, 1))
+            char == '{' -> list.add(Token(TokenType.OpenBrace, line, column, 1))
+            char == '}' -> list.add(Token(TokenType.CloseBrace, line, column, 1))
+            char == ',' -> list.add(Token(TokenType.Comma, line, column, 1))
+            char == '.' -> list.add(Token(TokenType.Dot, line, column, 1))
+            char == ';' -> list.add(Token(TokenType.Semicolon, line, column, 1))
+            char == ':' -> list.add(Token(TokenType.Colon, line, column, 1))
+            char == '+' -> if (index + 1 < str.length && str[index + 1] == '=') {
                 list.add(Token(TokenType.PlusAssign, line, column, 2))
-                index++; column++;
+                index+=2; column+=2
+                continue
             } else list.add(Token(TokenType.Plus, line, column, 1))
-            '-' -> if (index + 1 < str.length) {
+            char == '-' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
                         list.add(Token(TokenType.MinusAssign, line, column, 1))
                         index+=2; column+=2
+                        continue
                     }
                     '>' -> {
                         list.add(Token(TokenType.Arrow, line, column, 1))
                         index+=2; column+=2
+                        continue
                     }
                     else -> list.add(Token(TokenType.Minus, line, column, 1))
                 }
             } else list.add(Token(TokenType.Minus, line, column, 1))
-            '*' -> if (index + 1 < str.length) {
+            char == '*' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
                         list.add(Token(TokenType.MultiplyAssign, line, column, 1))
                         index+=2; column+=2
+                        continue
                     }
                     else -> list.add(Token(TokenType.Multiply, line, column, 1))
                 }
             } else list.add(Token(TokenType.Multiply, line, column, 1))
-            '/' -> if (index + 1 < str.length) {
+            char == '/' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
-                        list.add(Token(TokenType.Divide, line, column, 1))
+                        list.add(Token(TokenType.DivideAssign, line, column, 1))
                         index+=2; column+=2
+                        continue
                     }
                     '/' -> {
                         TODO("Line comment")
@@ -126,20 +134,106 @@ fun tokenize(str: String): Tokens {
                     else -> list.add(Token(TokenType.Divide, line, column, 1))
                 }
             } else list.add(Token(TokenType.Divide, line, column, 1))
-            '&' -> if (index + 1 < str.length) {
+            char == '%' -> if (index + 1 < str.length && str[index + 1] == '=') {
+                list.add(Token(TokenType.RemainderAssign, line, column, 2))
+                index+=2; column+=2;
+                continue
+            } else list.add(Token(TokenType.Remainder, line, column, 1))
+            char == '&' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
                         list.add(Token(TokenType.ConcatAssign, line, column, 1))
                         index+=2; column+=2
+                        continue
                     }
                     '&' -> {
                         list.add(Token(TokenType.BoolAnd, line, column, 1))
                         index+=2; column+=2
+                        continue
                     }
                     else -> list.add(Token(TokenType.Concat, line, column, 1))
                 }
             } else list.add(Token(TokenType.Concat, line, column, 1))
-
+            char == '<' -> if (index + 1 < str.length) {
+                when (str[index + 1]) {
+                    '=' -> {
+                        list.add(Token(TokenType.LessEqual, line, column, 1))
+                        index+=2; column+=2
+                        continue
+                    }
+                    else -> list.add(Token(TokenType.LessThan, line, column, 1))
+                }
+            } else list.add(Token(TokenType.LessThan, line, column, 1))
+            char == '>' -> if (index + 1 < str.length) {
+                when (str[index + 1]) {
+                    '=' -> {
+                        list.add(Token(TokenType.GreaterEqual, line, column, 1))
+                        index+=2; column+=2
+                        continue
+                    }
+                    else -> list.add(Token(TokenType.GreaterThan, line, column, 1))
+                }
+            } else list.add(Token(TokenType.GreaterThan, line, column, 1))
+            char == '=' -> if (index + 1 < str.length) {
+                when (str[index + 1]) {
+                    '=' -> {
+                        list.add(Token(TokenType.Equal, line, column, 1))
+                        index+=2; column+=2
+                        continue
+                    }
+                    else -> list.add(Token(TokenType.Assign, line, column, 1))
+                }
+            } else list.add(Token(TokenType.Assign, line, column, 1))
+            char == '!' -> if (index + 1 < str.length) {
+                when (str[index + 1]) {
+                    '=' -> {
+                        list.add(Token(TokenType.NotEqual, line, column, 1))
+                        index+=2; column+=2
+                        continue
+                    }
+                    else -> list.add(Token(TokenType.BoolNot, line, column, 1))
+                }
+            } else list.add(Token(TokenType.BoolNot, line, column, 1))
+            char == '|' -> if (index + 1 < str.length && str[index + 1] == '|') {
+                list.add(Token(TokenType.BoolOr, line, column, 2))
+                index+=2; column+=2
+                continue
+            } else throw SyntaxError("Unexpected character '|'. Did you mean '||'?", line, column)
+            char.isLetter() || char == '_' -> {
+                val xPos = column
+                var s = ""
+                while (index < str.length && (str[index].isLetterOrDigit() || str[index] == '_')) {
+                    s += str[index]
+                    index++; column++
+                }
+                list.add(Token(TokenType.Ident(s), line, xPos, column - xPos))
+                continue
+            }
+            char.isDigit() -> {
+                val xPos = column
+                var num = 0
+                while (index < str.length && str[index].isDigit()) {
+                    num *= 10
+                    num += str[index].digitToInt();
+                    index++; column++
+                }
+                if (str[index] == '.') {
+                    index++; column++
+                    var float = num.toFloat()
+                    var position = 1f
+                    while (index < str.length && str[index].isDigit()) {
+                        position /= 10
+                        float += str[index].digitToInt() * position;
+                        index++; column++
+                    }
+                    list.add(Token(TokenType.Num(float), line, xPos, column - xPos))
+                } else if (str[index] == 'f') {
+                    list.add(Token(TokenType.Num(num.toFloat()), line, xPos, column - xPos))
+                    index++; column++
+                } else list.add(Token(TokenType.Int(num), line, xPos, column - xPos))
+                continue
+            }
+            // Strings
         }
         index++; column++
     }

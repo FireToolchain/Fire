@@ -214,7 +214,7 @@ fun tokenize(str: String): Tokens {
                 var num = 0
                 while (index < str.length && str[index].isDigit()) {
                     num *= 10
-                    num += str[index].digitToInt();
+                    num += str[index].digitToInt()
                     index++; column++
                 }
                 if (str[index] == '.') {
@@ -233,7 +233,36 @@ fun tokenize(str: String): Tokens {
                 } else list.add(Token(TokenType.Int(num), line, xPos, column - xPos))
                 continue
             }
-            // Strings
+            char == '"' || char == '\'' -> {
+                var s = ""
+                var escape = false
+                index++; column++
+                while (index < str.length) {
+                    val c = str[index]
+                    if (escape) {
+                        s += when (c) {
+                            '\\' -> '\\'
+                            'n' -> '\n'
+                            'r' -> '\r'
+                            't' -> '\t'
+                            'b' -> '\b'
+                            else -> throw SyntaxError("Invalid escape sequence \\$c", line, column - 1)
+                        }
+                        escape = false
+                    } else {
+
+                    }
+                    index++; column++
+                }
+                list.add(Token(TokenType.String(s), line, xPos, column - xPos))
+            }
+            char == '\n' -> {
+                column = 0
+                line++
+            }
+            !char.isWhitespace() -> {
+                throw SyntaxError("Unexpected character '$char'", line, column)
+            }
         }
         index++; column++
     }

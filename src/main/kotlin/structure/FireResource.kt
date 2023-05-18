@@ -1,11 +1,35 @@
 package structure
 
 /**
- * Represents that the object is a Fire Resource, such as a folder, file, struct, enum, function etc.
+ * Represents a resource in fire such as a struct, file, or function.
  */
-interface FireResource {
-    val location: ResourceLocation
-    val resourceName: ResourceName
+open class FireResource(val resourceName: ResourceName, val parent: FireResource?)
+
+/**
+ * Represents a resource in fire that contains other resources, such as folders, structs, or enums.
+ */
+abstract class FireContainerResource<T : FireResource>(resourceName: ResourceName, parent: FireResource?) : FireResource(resourceName, parent) {
+    private val children: Map<ResourceName, T> = hashMapOf()
+
+    /**
+     * Returns a child resource, or null if it doesn't exist.
+     */
+    fun getChildOrNull(name: ResourceName) = children[name]
+
+    /**
+     * Returns a child resource, or throws a NoSuchElementException if it doesn't exist.
+     */
+    fun getChild(name: ResourceName) = getChildOrNull(name) ?: throw NoSuchElementException("No sub-resource named $name")
+
+    fun getInner(path: ResourceLocation) {
+        var res: FireResource = this
+        for (p in path.dir) {
+            if (res is FireContainerResource<*>) {
+                res = res.getChild(p)
+            }
+            // TODO
+        }
+    }
 }
 
 /**

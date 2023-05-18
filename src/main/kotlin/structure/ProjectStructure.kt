@@ -14,9 +14,6 @@ class FireDirectory(name: ResourceName) : FireContainerResource<FireContainerRes
 class FireFile(private val file: File, name: ResourceName) : FireContainerResource<FireContainerResource<*>>(name) {
     /**
      * The contents of the FireFile.
-     *
-     * TODO May fail / lag for large files due to .readLines().
      */
-    val text: String
-        get() = FileReader(file).readText()
+    val text by lazy { FileReader(file).readText() }
 }

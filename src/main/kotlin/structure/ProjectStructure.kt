@@ -13,11 +13,10 @@ class FireDirectory(name: ResourceName) : FireContainerResource<FireContainerRes
  */
 class FireFile(private val file: File, name: ResourceName) : FireContainerResource<FireContainerResource<*>>(name) {
     /**
-     * Get the contents of the FireFile.
+     * The contents of the FireFile.
      *
      * TODO May fail / lag for large files due to .readLines().
      */
-    fun getText(): String {
-        return FileReader(file).readLines().joinToString("\n")
-    }
+    val text: String
+        get() = FileReader(file).readText()
 }

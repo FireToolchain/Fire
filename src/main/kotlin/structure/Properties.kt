@@ -2,7 +2,6 @@ package structure
 
 /**
  * Mark this resource as having properties.
- * A property is
  */
 interface PropertyHolder<T> {
     val props: MutableMap<ResourceName, T>

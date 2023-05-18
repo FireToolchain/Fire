@@ -9,10 +9,11 @@ package structure
 
 
 /**
- * Represents a resource in fire such as a struct, file, or function.
+ * Represents a resource in fire that may be referenced such as a struct, file, or function.
  */
 open class FireResource(val resourceName: ResourceName) {
-    val parent: FireResource? = null
+    var parent: FireResource? = null
+    var location = ResourceLocation(listOf(resourceName))
 }
 
 /**
@@ -55,6 +56,8 @@ open class FireContainerResource<T : FireResource>(resourceName: ResourceName) :
     fun addChild(resource: T) {
         if (children.contains(resource.resourceName)) throw IllegalArgumentException("Child ${resource.resourceName} already exists")
         children[resource.resourceName] = resource
+        resource.parent = this
+        resource.location = this.location.child(resource.resourceName)
     }
 }
 

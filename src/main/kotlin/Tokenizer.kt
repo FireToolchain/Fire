@@ -150,7 +150,7 @@ fun tokenize(str: String): Tokens {
             } else list.add(Token(TokenType.Divide, line, column, 1))
             char == '%' -> if (index + 1 < str.length && str[index + 1] == '=') {
                 list.add(Token(TokenType.RemainderAssign, line, column, 2))
-                index+=2; column+=2;
+                index+=2; column+=2
                 continue
             } else list.add(Token(TokenType.Remainder, line, column, 1))
             char == '&' -> if (index + 1 < str.length) {
@@ -247,6 +247,17 @@ fun tokenize(str: String): Tokens {
                 }
                 continue
             }
+            char == '@' -> {
+                val xPos = column
+                index++; column++
+                var s = ""
+                while (index < str.length && (str[index].isLetterOrDigit() || str[index] == '_')) {
+                    s += str[index]
+                    index++; column++
+                }
+                list.add(Token(TokenType.Annotation(s), line, xPos, column - xPos))
+                continue
+            }
             char.isDigit() -> {
                 val xPos = column
                 var num = 0
@@ -261,7 +272,7 @@ fun tokenize(str: String): Tokens {
                     var position = 1f
                     while (index < str.length && str[index].isDigit()) {
                         position /= 10
-                        float += str[index].digitToInt() * position;
+                        float += str[index].digitToInt() * position
                         index++; column++
                     }
                     list.add(Token(TokenType.Num(float), line, xPos, column - xPos))

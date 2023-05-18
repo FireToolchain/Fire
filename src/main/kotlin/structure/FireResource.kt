@@ -1,26 +1,35 @@
 package structure
 
 /**
+ * A "Resource" is something that can be referenced by a resource location string.
+ * A resource location string looks like this: A::B::C::D.
+ *
+ * If you want something referenced like this: A.b.c.d, you are looking for a Property.
+ */
+
+
+/**
  * Represents a resource in fire such as a struct, file, or function.
  */
-open class FireResource(val resourceName: ResourceName, val parent: FireContainerResource<*>?)
+open class FireResource(val resourceName: ResourceName) {
+    val parent: FireResource? = null
+}
 
 /**
  * Represents a resource in fire that contains other resources, such as folders, structs, or enums.
  */
-open class FireContainerResource<T : FireResource>(resourceName: ResourceName, parent: FireContainerResource<*>?)
-    : FireResource(resourceName, parent) {
+open class FireContainerResource<T : FireResource>(resourceName: ResourceName) : FireResource(resourceName) {
     private val children: MutableMap<ResourceName, T> = mutableMapOf()
 
     /**
      * Returns a child resource, or null if it doesn't exist.
      */
-    fun getChildOrNull(name: ResourceName) = children[name]
+    fun getChildResourceOrNull(name: ResourceName) = children[name]
 
     /**
      * Returns a child resource, or throws a NoSuchElementException if it doesn't exist.
      */
-    fun getChild(name: ResourceName) = getChildOrNull(name) ?: throw NoSuchElementException("No sub-resource named $name")
+    fun getChildResource(name: ResourceName) = getChildResourceOrNull(name) ?: throw NoSuchElementException("No sub-resource named $name")
 
     /**
      * Follows a ResourceLocation to find a resource.
@@ -33,7 +42,7 @@ open class FireContainerResource<T : FireResource>(resourceName: ResourceName, p
         var res: FireResource = this
         for (p in path.dir) {
             if (res is FireContainerResource<*>) {
-                res = res.getChild(p)
+                res = res.getChildResource(p)
             } else throw IllegalStateException("$resourceName cannot have sub-elements.")
         }
         return res
@@ -104,7 +113,8 @@ data class ResourceLocation(val dir: List<ResourceName>) {
  * Input string must match /^[a-zA-Z][a-zA-Z0-9_]*$/ or an IllegalArgumentException is thrown.
  * Immutable.
  */
-data class ResourceName(val name: String) {
+@JvmInline
+value class ResourceName(private val name: String) {
     init {
         if (name.isEmpty()) throw IllegalArgumentException("Resource name must have at least one character.")
         val reg = Regex("^[a-zA-Z][a-zA-Z0-9_]*$")

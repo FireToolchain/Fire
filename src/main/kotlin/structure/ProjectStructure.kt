@@ -15,5 +15,5 @@ class FireFile(private val file: File, name: ResourceName) : FireContainerResour
     /**
      * The contents of the FireFile.
      */
-    val text by lazy { FileReader(file).readText() }
+    val text by lazy { file.readText() }
 }

@@ -8,8 +8,8 @@ open class FireResource(val resourceName: ResourceName, val parent: FireResource
 /**
  * Represents a resource in fire that contains other resources, such as folders, structs, or enums.
  */
-abstract class FireContainerResource<T : FireResource>(resourceName: ResourceName, parent: FireResource?) : FireResource(resourceName, parent) {
-    private val children: Map<ResourceName, T> = hashMapOf()
+open class FireContainerResource<T : FireResource>(resourceName: ResourceName, parent: FireResource?) : FireResource(resourceName, parent) {
+    private val children: MutableMap<ResourceName, T> = mutableMapOf()
 
     /**
      * Returns a child resource, or null if it doesn't exist.
@@ -21,14 +21,30 @@ abstract class FireContainerResource<T : FireResource>(resourceName: ResourceNam
      */
     fun getChild(name: ResourceName) = getChildOrNull(name) ?: throw NoSuchElementException("No sub-resource named $name")
 
-    fun getInner(path: ResourceLocation) {
+    /**
+     * Follows a ResourceLocation to find a resource.
+     * For example: Suppose we have Project::Folder::File::Struct::Method.
+     * If we run getInner on the Folder with the Location File::Struct, it will return Struct.
+     *
+     * May throw NoSuchElementException or IllegalStateException on invalid inputs.
+     */
+    fun getInner(path: ResourceLocation): FireResource {
         var res: FireResource = this
         for (p in path.dir) {
             if (res is FireContainerResource<*>) {
                 res = res.getChild(p)
-            }
-            // TODO
+            } else throw IllegalStateException("$resourceName cannot have sub-elements.")
         }
+        return res
+    }
+
+    /**
+     * Adds a resource as a child of this resource.
+     * If a child resource with its name already exists, throw IllegalArgumentException.
+     */
+    fun addChild(resource: T) {
+        if (children.contains(resource.resourceName)) throw IllegalArgumentException("Child ${resource.resourceName} already exists")
+        children[resource.resourceName] = resource
     }
 }
 
@@ -59,7 +75,7 @@ data class ResourceLocation(val dir: List<ResourceName>) {
      *
      * A resource with one node will return null. (A) has no parent.
      */
-    fun parentOrNull(): ResourceLocation? {
+    fun getParentOrNull(): ResourceLocation? {
         return if (dir.size > 2) {
             ResourceLocation(dir.subList(0, dir.size-1))
         } else null
@@ -71,7 +87,7 @@ data class ResourceLocation(val dir: List<ResourceName>) {
      *
      * A resource with one node will throw an IllegalStateException. (A) has no parent.
      */
-    fun parent() = parentOrNull() ?: throw IllegalStateException("ResourceLocation has no parent.")
+    fun getParent() = getParentOrNull() ?: throw IllegalStateException("ResourceLocation has no parent.")
 
     /**
      * Returns the head element of the ResourceLocation.

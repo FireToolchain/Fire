@@ -3,12 +3,13 @@ package structure
 /**
  * Represents a resource in fire such as a struct, file, or function.
  */
-open class FireResource(val resourceName: ResourceName, val parent: FireResource?)
+open class FireResource(val resourceName: ResourceName, val parent: FireContainerResource<*>?)
 
 /**
  * Represents a resource in fire that contains other resources, such as folders, structs, or enums.
  */
-open class FireContainerResource<T : FireResource>(resourceName: ResourceName, parent: FireResource?) : FireResource(resourceName, parent) {
+open class FireContainerResource<T : FireResource>(resourceName: ResourceName, parent: FireContainerResource<*>?)
+    : FireResource(resourceName, parent) {
     private val children: MutableMap<ResourceName, T> = mutableMapOf()
 
     /**

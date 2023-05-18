@@ -1,5 +1,8 @@
+import tokenizing.tokenize
+
 fun main(args: Array<String>) {
-    println(tokenize("""
+    println(
+        tokenize("""
         fn awesome(param: Int): Output {
             let! a = 2;
             let! b = param;

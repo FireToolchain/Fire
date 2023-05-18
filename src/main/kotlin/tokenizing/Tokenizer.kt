@@ -1,3 +1,5 @@
+package tokenizing
+
 data class Tokens(val list: List<Token>)
 data class Token(val type: TokenType, val line: Int, val column: Int, val width: Int)
 sealed interface TokenType {

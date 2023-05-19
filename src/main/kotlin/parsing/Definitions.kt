@@ -11,6 +11,10 @@ interface FireVarDef {
     data class Local(val name: ResourceName, val type: FireType) : FireVarDef
     data class Global(val name: ResourceName, val type: FireType) : FireResource(name), FireVarDef
 }
+
+/**
+ * Represents a constant definition
+ */
 interface FireConstDef {
     data class Local(val name: ResourceName, val data: FireExpression) : FireVarDef
     data class Global(val name: ResourceName, val data: FireExpression) : FireResource(name), FireVarDef

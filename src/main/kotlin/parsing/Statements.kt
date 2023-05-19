@@ -7,6 +7,8 @@ import structure.ResourceLocation
  */
 sealed interface FireStatement {
     data class Block(val inner: List<FireStatement>) : FireStatement
+    data class DefVar(val def: FireVarDef) : FireStatement
+    data class DefConst(val def: FireConstDef) : FireStatement
     data class Return(val returnVal: FireExpression) : FireStatement
     data class KindlingInsert(val expr: String) : FireStatement
     data class If(val condition: FireExpression, val code: FireStatement) : FireStatement

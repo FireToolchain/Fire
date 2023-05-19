@@ -9,7 +9,7 @@ package structure
 
 
 /**
- * Represents a resource in fire that may be referenced such as a struct, file, or function.
+ * Represents a resource in fire that may be referenced with a ResourceLocation such as a struct, file, or function.
  */
 open class FireResource(val resourceName: ResourceName) {
     var parent: FireResource? = null

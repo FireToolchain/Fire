@@ -1,15 +1,15 @@
-package dev.ashli.fire.parser
+package dev.ashli.fire.parser.complete.definitions
 
+import dev.ashli.fire.parser.Resource
 import dev.ashli.fire.parser.complete.annotations.Annotated
 import dev.ashli.fire.parser.complete.annotations.Annotation
 import dev.ashli.fire.resources.ResourceLocation
 
 /**
- * Denotes that a parsed Fire structure is top-level.
+ * Represents a Fire method (function inside of an enum, struct, trait, etc)
  */
-open class TopLevel(
+class Method(
     override val location: ResourceLocation,
     override val annotations: List<Annotation>
 ) : Resource, Annotated {
-
 }

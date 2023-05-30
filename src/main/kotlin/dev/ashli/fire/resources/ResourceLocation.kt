@@ -4,6 +4,10 @@ package dev.ashli.fire.resources
  * Represents an immutable resource location.
  */
 class ResourceLocation(private val location: List<ResourceName>) {
+    init {
+        if (location.isEmpty()) throw IllegalStateException("ResourceLocation must have at least 1 ResourceName.")
+    }
+
     /**
      * @return True if this ResourceLocation is top-level.
      */
@@ -31,7 +35,7 @@ class ResourceLocation(private val location: List<ResourceName>) {
      * @return The parent resource location.
      * @throws NullPointerException If isTopLevel() is true.
      */
-    fun parent() = parentOrNull() ?: throw NullPointerException("Resource $this has no parent.")
+    fun parent() = parentOrNull() ?: throw IllegalStateException("Resource $this has no parent.")
 
     /**
      * Returns the parent resource of this one.
@@ -46,6 +50,14 @@ class ResourceLocation(private val location: List<ResourceName>) {
             ResourceLocation(location.subList(0, location.size-1))
         }
     }
+
+    /**
+     * Gets the name of this location.
+     *
+     * @return The name of this resource this location points to.
+     */
+    fun getName() = location[location.size-1]
+
 
     override fun toString() = location.joinToString("::")
 }

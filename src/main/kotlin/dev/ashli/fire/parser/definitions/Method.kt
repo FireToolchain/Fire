@@ -1,6 +1,6 @@
 package dev.ashli.fire.parser.definitions
 
-import dev.ashli.fire.parser.Locatable
+import dev.ashli.fire.parser.Resource
 import dev.ashli.fire.parser.annotations.Annotated
 import dev.ashli.fire.parser.annotations.Annotation
 import dev.ashli.fire.resources.ResourceLocation
@@ -11,5 +11,5 @@ import dev.ashli.fire.resources.ResourceLocation
 class Method(
     override val location: ResourceLocation,
     override val annotations: List<Annotation>
-) : Locatable, Annotated {
+) : Resource, Annotated {
 }

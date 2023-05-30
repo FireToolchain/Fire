@@ -1,5 +1,7 @@
 package dev.ashli.fire.parser.expression.calculations
 
+import dev.ashli.fire.parser.expression.Expression
+
 /**
  * Represents a Dynamic method call.
  * A method call is dynamic when the actual function to be run is dependent at run-time.
@@ -9,5 +11,6 @@ package dev.ashli.fire.parser.expression.calculations
  *
  * Math operations may be dynamic: a + b becomes A::add(a, b), which may become a.add(b) if A's type is unknown.
  */
-class DynamicMethodCall {
+class DynamicMethodCall : Expression() {
+    override fun isPure() = false // Maybe
 }

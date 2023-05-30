@@ -1,4 +1,7 @@
 package dev.ashli.fire.parser.expression.value
 
-open class FireValue {
+import dev.ashli.fire.parser.expression.Expression
+
+open class FireValue : Expression() {
+    override fun isPure() = true
 }

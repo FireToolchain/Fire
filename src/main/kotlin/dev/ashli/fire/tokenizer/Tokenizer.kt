@@ -64,6 +64,8 @@ sealed interface TokenType {
     data object If : TokenType
     data object Else : TokenType
     data object Return : TokenType
+    data object Break : TokenType
+    data object Continue : TokenType
     data object Struct : TokenType
     data object Private : TokenType
     data object Impl : TokenType
@@ -73,6 +75,8 @@ sealed interface TokenType {
     data object Trait : TokenType
     data object Import : TokenType
     data object Where : TokenType
+    data object This : TokenType
+    data object ThisType : TokenType
 
 
     // Values
@@ -268,6 +272,10 @@ fun tokenize(str: String): Tokens {
                     "for" -> list.add(Token(TokenType.For, line, xPos, column - xPos))
                     "while" -> list.add(Token(TokenType.While, line, xPos, column - xPos))
                     "return" -> list.add(Token(TokenType.Return, line, xPos, column - xPos))
+                    "break" -> list.add(Token(TokenType.Break, line, xPos, column - xPos))
+                    "continue" -> list.add(Token(TokenType.Continue, line, xPos, column - xPos))
+                    "this" -> list.add(Token(TokenType.This, line, xPos, column - xPos))
+                    "This" -> list.add(Token(TokenType.ThisType, line, xPos, column - xPos))
                     "where" -> list.add(Token(TokenType.Where, line, xPos, column - xPos))
                     "struct" -> list.add(Token(TokenType.Struct, line, xPos, column - xPos))
                     "trait" -> list.add(Token(TokenType.Trait, line, xPos, column - xPos))

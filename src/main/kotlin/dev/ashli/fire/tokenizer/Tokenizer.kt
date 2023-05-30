@@ -1,5 +1,18 @@
+package dev.ashli.fire.tokenizer
+
+/**
+ * Represents a list of tokens.
+ */
 data class Tokens(val list: List<Token>)
+
+/**
+ * Represents a single token. Includes its position, width, and type-data.
+ */
 data class Token(val type: TokenType, val line: Int, val column: Int, val width: Int)
+
+/**
+ * Represents a token type.
+ */
 sealed interface TokenType {
     // Grouping symbols
     data object OpenParen : TokenType
@@ -70,6 +83,15 @@ sealed interface TokenType {
     data object False : TokenType
 
 }
+
+/**
+ * Tokenizes a string into a Tokens object.
+ *
+ * @param str String to tokenize
+ * @return Tokens
+ *
+ * @throws SyntaxError
+ */
 fun tokenize(str: String): Tokens {
     val list = mutableListOf<Token>()
     var line = 1
@@ -213,6 +235,20 @@ fun tokenize(str: String): Tokens {
                 index+=2; column+=2
                 continue
             } else throw SyntaxError("Unexpected character '|'. Did you mean '||'?", line, column)
+            char == '@' -> {
+                val xPos = column
+                index++; column++
+                var s = ""
+                while (index < str.length && (str[index].isLetterOrDigit() || str[index] == '_')) {
+                    s += str[index]
+                    index++; column++
+                }
+                if (s.isEmpty()) {
+                    throw SyntaxError("Annotation starter (@) with no annotation name.", xPos, line)
+                }
+                list.add(Token(TokenType.Annotation(s), line, xPos, column - xPos))
+                continue
+            }
             char.isLetter() || char == '_' -> {
                 val xPos = column
                 var s = ""

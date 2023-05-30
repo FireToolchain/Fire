@@ -252,17 +252,13 @@ fun tokenize(str: String): Tokens {
             char.isLetter() || char == '_' -> {
                 val xPos = column
                 var s = ""
-                while (index < str.length && (str[index].isLetterOrDigit() || str[index] == '_')) {
+                while (index < str.length && (str[index].isLetterOrDigit() || str[index] == '_' || str[index] == '!')) {
                     s += str[index]
                     index++; column++
                 }
                 when (s) {
-                    "let" -> if (index < str.length && str[index] == '!') {
-                        index++; column++
-                        list.add(Token(TokenType.ImmutableLet, line, xPos, column - xPos))
-                    } else {
-                        list.add(Token(TokenType.MutableLet, line, xPos, column - xPos))
-                    }
+                    "let!" -> list.add(Token(TokenType.ImmutableLet, line, xPos, column - xPos))
+                    "let" -> list.add(Token(TokenType.MutableLet, line, xPos, column - xPos))
                     "fn" -> list.add(Token(TokenType.Function, line, xPos, column - xPos))
                     "proc" -> list.add(Token(TokenType.Process, line, xPos, column - xPos))
                     "if" -> list.add(Token(TokenType.If, line, xPos, column - xPos))

@@ -6,15 +6,15 @@ import dev.ashli.fire.tokenizer.TokenType
 import dev.ashli.fire.tokenizer.Tokens
 
 /**
- * Represents a "this" value.
+ * Represents a String primitive in Fire.
  */
-class This {
+class FireString(val value: String) : FireValue()  {
     companion object {
-        fun parse(tokens: Tokens): This {
+        fun parse(tokens: Tokens): FireString {
             if (!tokens.hasNext()) throw MissingTokenError("No token to parse.", tokens)
             val token = tokens.next()
-            if (token.type !is TokenType.This) throw ParseTokenError("Token is not a 'this' keyword.", token)
-            return This()
+            if (token.type !is TokenType.String) throw ParseTokenError("Token is not a string.", token)
+            return FireString(token.type.str)
         }
     }
 }

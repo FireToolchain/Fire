@@ -6,15 +6,18 @@ import dev.ashli.fire.tokenizer.TokenType
 import dev.ashli.fire.tokenizer.Tokens
 
 /**
- * Represents a "this" value.
+ * Represents a Number primitive in Fire.
  */
-class This {
+class FireNumber(val value: Float) : FireValue() {
     companion object {
-        fun parse(tokens: Tokens): This {
+        fun parse(tokens: Tokens): FireNumber {
             if (!tokens.hasNext()) throw MissingTokenError("No token to parse.", tokens)
             val token = tokens.next()
-            if (token.type !is TokenType.This) throw ParseTokenError("Token is not a 'this' keyword.", token)
-            return This()
+            return when (token.type) {
+                is TokenType.Int -> FireNumber(token.type.num.toFloat())
+                is TokenType.Num -> FireNumber(token.type.num)
+                else -> throw ParseTokenError("Token is not a number.", token)
+            }
         }
     }
 }

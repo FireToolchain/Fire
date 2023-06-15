@@ -1,14 +1,6 @@
 package dev.ashli.fire.tokenizer
 
-/**
- * Represents a list of tokens.
- */
-data class Tokens(val list: List<Token>)
-
-/**
- * Represents a single token. Includes its position, width, and type-data.
- */
-data class Token(val type: TokenType, val line: Int, val column: Int, val width: Int)
+import dev.ashli.fire.resources.ResourceName
 
 /**
  * Represents a token type.
@@ -97,7 +89,7 @@ sealed interface TokenType {
  *
  * @throws SyntaxError
  */
-fun tokenize(str: String): Tokens {
+fun tokenize(str: String, fileName: ResourceName): Tokens {
     val list = mutableListOf<Token>()
     var line = 1
     var column = 0
@@ -105,50 +97,50 @@ fun tokenize(str: String): Tokens {
     while (index < str.length) {
         val char = str[index]
         when {
-            char == '(' -> list.add(Token(TokenType.OpenParen, line, column, 1))
-            char == ')' -> list.add(Token(TokenType.CloseParen, line, column, 1))
-            char == '[' -> list.add(Token(TokenType.OpenBracket, line, column, 1))
-            char == ']' -> list.add(Token(TokenType.CloseBracket, line, column, 1))
-            char == '{' -> list.add(Token(TokenType.OpenBrace, line, column, 1))
-            char == '}' -> list.add(Token(TokenType.CloseBrace, line, column, 1))
-            char == ',' -> list.add(Token(TokenType.Comma, line, column, 1))
-            char == '.' -> list.add(Token(TokenType.Dot, line, column, 1))
-            char == ';' -> list.add(Token(TokenType.Semicolon, line, column, 1))
-            char == ':' -> list.add(Token(TokenType.Colon, line, column, 1))
+            char == '(' -> list.add(Token(TokenType.OpenParen, SingleTokenPosition(line, column, fileName)))
+            char == ')' -> list.add(Token(TokenType.CloseParen, SingleTokenPosition(line, column, fileName)))
+            char == '[' -> list.add(Token(TokenType.OpenBracket, SingleTokenPosition(line, column, fileName)))
+            char == ']' -> list.add(Token(TokenType.CloseBracket, SingleTokenPosition(line, column, fileName)))
+            char == '{' -> list.add(Token(TokenType.OpenBrace, SingleTokenPosition(line, column, fileName)))
+            char == '}' -> list.add(Token(TokenType.CloseBrace, SingleTokenPosition(line, column, fileName)))
+            char == ',' -> list.add(Token(TokenType.Comma, SingleTokenPosition(line, column, fileName)))
+            char == '.' -> list.add(Token(TokenType.Dot, SingleTokenPosition(line, column, fileName)))
+            char == ';' -> list.add(Token(TokenType.Semicolon, SingleTokenPosition(line, column, fileName)))
+            char == ':' -> list.add(Token(TokenType.Colon, SingleTokenPosition(line, column, fileName)))
             char == '+' -> if (index + 1 < str.length && str[index + 1] == '=') {
-                list.add(Token(TokenType.PlusAssign, line, column, 2))
+                list.add(Token(TokenType.PlusAssign, WholeTokenPosition(line, column, 2, fileName)))
                 index+=2; column+=2
                 continue
-            } else list.add(Token(TokenType.Plus, line, column, 1))
+            } else list.add(Token(TokenType.Plus, SingleTokenPosition(line, column, fileName)))
             char == '-' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
-                        list.add(Token(TokenType.MinusAssign, line, column, 1))
+                        list.add(Token(TokenType.MinusAssign, SingleTokenPosition(line, column, fileName)))
                         index+=2; column+=2
                         continue
                     }
                     '>' -> {
-                        list.add(Token(TokenType.Arrow, line, column, 1))
+                        list.add(Token(TokenType.Arrow, SingleTokenPosition(line, column, fileName)))
                         index+=2; column+=2
                         continue
                     }
-                    else -> list.add(Token(TokenType.Minus, line, column, 1))
+                    else -> list.add(Token(TokenType.Minus, SingleTokenPosition(line, column, fileName)))
                 }
-            } else list.add(Token(TokenType.Minus, line, column, 1))
+            } else list.add(Token(TokenType.Minus, SingleTokenPosition(line, column, fileName)))
             char == '*' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
-                        list.add(Token(TokenType.MultiplyAssign, line, column, 1))
+                        list.add(Token(TokenType.MultiplyAssign, SingleTokenPosition(line, column, fileName)))
                         index+=2; column+=2
                         continue
                     }
-                    else -> list.add(Token(TokenType.Multiply, line, column, 1))
+                    else -> list.add(Token(TokenType.Multiply, SingleTokenPosition(line, column, fileName)))
                 }
-            } else list.add(Token(TokenType.Multiply, line, column, 1))
+            } else list.add(Token(TokenType.Multiply, SingleTokenPosition(line, column, fileName)))
             char == '/' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
-                        list.add(Token(TokenType.DivideAssign, line, column, 1))
+                        list.add(Token(TokenType.DivideAssign, SingleTokenPosition(line, column, fileName)))
                         index+=2; column+=2
                         continue
                     }
@@ -172,71 +164,71 @@ fun tokenize(str: String): Tokens {
                         }
                         continue
                     }
-                    else -> list.add(Token(TokenType.Divide, line, column, 1))
+                    else -> list.add(Token(TokenType.Divide, SingleTokenPosition(line, column, fileName)))
                 }
-            } else list.add(Token(TokenType.Divide, line, column, 1))
+            } else list.add(Token(TokenType.Divide, SingleTokenPosition(line, column, fileName)))
             char == '%' -> if (index + 1 < str.length && str[index + 1] == '=') {
-                list.add(Token(TokenType.RemainderAssign, line, column, 2))
+                list.add(Token(TokenType.RemainderAssign, WholeTokenPosition(line, column, 2, fileName)))
                 index+=2; column+=2;
                 continue
-            } else list.add(Token(TokenType.Remainder, line, column, 1))
+            } else list.add(Token(TokenType.Remainder, SingleTokenPosition(line, column, fileName)))
             char == '&' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
-                        list.add(Token(TokenType.ConcatAssign, line, column, 1))
+                        list.add(Token(TokenType.ConcatAssign, SingleTokenPosition(line, column, fileName)))
                         index+=2; column+=2
                         continue
                     }
                     '&' -> {
-                        list.add(Token(TokenType.BoolAnd, line, column, 1))
+                        list.add(Token(TokenType.BoolAnd, SingleTokenPosition(line, column, fileName)))
                         index+=2; column+=2
                         continue
                     }
-                    else -> list.add(Token(TokenType.Concat, line, column, 1))
+                    else -> list.add(Token(TokenType.Concat, SingleTokenPosition(line, column, fileName)))
                 }
-            } else list.add(Token(TokenType.Concat, line, column, 1))
+            } else list.add(Token(TokenType.Concat, SingleTokenPosition(line, column, fileName)))
             char == '<' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
-                        list.add(Token(TokenType.LessEqual, line, column, 1))
+                        list.add(Token(TokenType.LessEqual, SingleTokenPosition(line, column, fileName)))
                         index+=2; column+=2
                         continue
                     }
-                    else -> list.add(Token(TokenType.LessThan, line, column, 1))
+                    else -> list.add(Token(TokenType.LessThan, SingleTokenPosition(line, column, fileName)))
                 }
-            } else list.add(Token(TokenType.LessThan, line, column, 1))
+            } else list.add(Token(TokenType.LessThan, SingleTokenPosition(line, column, fileName)))
             char == '>' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
-                        list.add(Token(TokenType.GreaterEqual, line, column, 1))
+                        list.add(Token(TokenType.GreaterEqual, SingleTokenPosition(line, column, fileName)))
                         index+=2; column+=2
                         continue
                     }
-                    else -> list.add(Token(TokenType.GreaterThan, line, column, 1))
+                    else -> list.add(Token(TokenType.GreaterThan, SingleTokenPosition(line, column, fileName)))
                 }
-            } else list.add(Token(TokenType.GreaterThan, line, column, 1))
+            } else list.add(Token(TokenType.GreaterThan, SingleTokenPosition(line, column, fileName)))
             char == '=' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
-                        list.add(Token(TokenType.Equal, line, column, 1))
+                        list.add(Token(TokenType.Equal, SingleTokenPosition(line, column, fileName)))
                         index+=2; column+=2
                         continue
                     }
-                    else -> list.add(Token(TokenType.Assign, line, column, 1))
+                    else -> list.add(Token(TokenType.Assign, SingleTokenPosition(line, column, fileName)))
                 }
-            } else list.add(Token(TokenType.Assign, line, column, 1))
+            } else list.add(Token(TokenType.Assign, SingleTokenPosition(line, column, fileName)))
             char == '!' -> if (index + 1 < str.length) {
                 when (str[index + 1]) {
                     '=' -> {
-                        list.add(Token(TokenType.NotEqual, line, column, 1))
+                        list.add(Token(TokenType.NotEqual, SingleTokenPosition(line, column, fileName)))
                         index+=2; column+=2
                         continue
                     }
-                    else -> list.add(Token(TokenType.BoolNot, line, column, 1))
+                    else -> list.add(Token(TokenType.BoolNot, SingleTokenPosition(line, column, fileName)))
                 }
-            } else list.add(Token(TokenType.BoolNot, line, column, 1))
+            } else list.add(Token(TokenType.BoolNot, SingleTokenPosition(line, column, fileName)))
             char == '|' -> if (index + 1 < str.length && str[index + 1] == '|') {
-                list.add(Token(TokenType.BoolOr, line, column, 2))
+                list.add(Token(TokenType.BoolOr, WholeTokenPosition(line, column, 2, fileName)))
                 index+=2; column+=2
                 continue
             } else throw SyntaxError("Unexpected character '|'. Did you mean '||'?", line, column)
@@ -251,7 +243,7 @@ fun tokenize(str: String): Tokens {
                 if (s.isEmpty()) {
                     throw SyntaxError("Annotation starter (@) with no annotation name.", xPos, line)
                 }
-                list.add(Token(TokenType.Annotation(s), line, xPos, column - xPos))
+                list.add(Token(TokenType.Annotation(s), WholeTokenPosition(line, xPos, column - xPos, fileName)))
                 continue
             }
             char.isLetter() || char == '_' -> {
@@ -261,31 +253,32 @@ fun tokenize(str: String): Tokens {
                     s += str[index]
                     index++; column++
                 }
+                val position = WholeTokenPosition(line, xPos, column - xPos, fileName)
                 when (s) {
-                    "let!" -> list.add(Token(TokenType.ImmutableLet, line, xPos, column - xPos))
-                    "let" -> list.add(Token(TokenType.MutableLet, line, xPos, column - xPos))
-                    "fn" -> list.add(Token(TokenType.Function, line, xPos, column - xPos))
-                    "fn!" -> list.add(Token(TokenType.StaticFunction, line, xPos, column - xPos))
-                    "proc" -> list.add(Token(TokenType.Process, line, xPos, column - xPos))
-                    "if" -> list.add(Token(TokenType.If, line, xPos, column - xPos))
-                    "else" -> list.add(Token(TokenType.Else, line, xPos, column - xPos))
-                    "for" -> list.add(Token(TokenType.For, line, xPos, column - xPos))
-                    "while" -> list.add(Token(TokenType.While, line, xPos, column - xPos))
-                    "return" -> list.add(Token(TokenType.Return, line, xPos, column - xPos))
-                    "break" -> list.add(Token(TokenType.Break, line, xPos, column - xPos))
-                    "continue" -> list.add(Token(TokenType.Continue, line, xPos, column - xPos))
-                    "this" -> list.add(Token(TokenType.This, line, xPos, column - xPos))
-                    "This" -> list.add(Token(TokenType.ThisType, line, xPos, column - xPos))
-                    "where" -> list.add(Token(TokenType.Where, line, xPos, column - xPos))
-                    "struct" -> list.add(Token(TokenType.Struct, line, xPos, column - xPos))
-                    "trait" -> list.add(Token(TokenType.Trait, line, xPos, column - xPos))
-                    "impl" -> list.add(Token(TokenType.Impl, line, xPos, column - xPos))
-                    "private" -> list.add(Token(TokenType.Private, line, xPos, column - xPos))
-                    "enum" -> list.add(Token(TokenType.Enum, line, xPos, column - xPos))
-                    "import" -> list.add(Token(TokenType.Import, line, xPos, column - xPos))
-                    "true" -> list.add(Token(TokenType.True, line, xPos, column - xPos))
-                    "false" -> list.add(Token(TokenType.False, line, xPos, column - xPos))
-                    else -> list.add(Token(TokenType.Ident(s), line, xPos, column - xPos))
+                    "let!" -> list.add(Token(TokenType.ImmutableLet, position))
+                    "let" -> list.add(Token(TokenType.MutableLet, position))
+                    "fn" -> list.add(Token(TokenType.Function, position))
+                    "fn!" -> list.add(Token(TokenType.StaticFunction, position))
+                    "proc" -> list.add(Token(TokenType.Process, position))
+                    "if" -> list.add(Token(TokenType.If, position))
+                    "else" -> list.add(Token(TokenType.Else, position))
+                    "for" -> list.add(Token(TokenType.For, position))
+                    "while" -> list.add(Token(TokenType.While, position))
+                    "return" -> list.add(Token(TokenType.Return, position))
+                    "break" -> list.add(Token(TokenType.Break, position))
+                    "continue" -> list.add(Token(TokenType.Continue, position))
+                    "this" -> list.add(Token(TokenType.This, position))
+                    "This" -> list.add(Token(TokenType.ThisType, position))
+                    "where" -> list.add(Token(TokenType.Where, position))
+                    "struct" -> list.add(Token(TokenType.Struct, position))
+                    "trait" -> list.add(Token(TokenType.Trait, position))
+                    "impl" -> list.add(Token(TokenType.Impl, position))
+                    "private" -> list.add(Token(TokenType.Private, position))
+                    "enum" -> list.add(Token(TokenType.Enum, position))
+                    "import" -> list.add(Token(TokenType.Import, position))
+                    "true" -> list.add(Token(TokenType.True, position))
+                    "false" -> list.add(Token(TokenType.False, position))
+                    else -> list.add(Token(TokenType.Ident(s), position))
                 }
                 continue
             }
@@ -306,11 +299,11 @@ fun tokenize(str: String): Tokens {
                         float += str[index].digitToInt() * position;
                         index++; column++
                     }
-                    list.add(Token(TokenType.Num(float), line, xPos, column - xPos))
+                    list.add(Token(TokenType.Num(float), WholeTokenPosition(line, xPos, column - xPos, fileName)))
                 } else if (str[index] == 'f') {
-                    list.add(Token(TokenType.Num(num.toFloat()), line, xPos, column - xPos))
+                    list.add(Token(TokenType.Num(num.toFloat()), WholeTokenPosition(line, xPos, column - xPos, fileName)))
                     index++; column++
-                } else list.add(Token(TokenType.Int(num), line, xPos, column - xPos))
+                } else list.add(Token(TokenType.Int(num), WholeTokenPosition(line, xPos, column - xPos, fileName)))
                 continue
             }
             char == '"' || char == '\'' -> {
@@ -340,7 +333,7 @@ fun tokenize(str: String): Tokens {
                     }
                     index++; column++
                 }
-                list.add(Token(TokenType.String(s), line, xPos, column - xPos))
+                list.add(Token(TokenType.String(s), WholeTokenPosition(line, xPos, column - xPos, fileName)))
                 index++; column++
                 continue
             }
@@ -354,5 +347,5 @@ fun tokenize(str: String): Tokens {
         }
         index++; column++
     }
-    return Tokens(list)
+    return Tokens(list.toTypedArray(), fileName)
 }

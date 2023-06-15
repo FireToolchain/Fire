@@ -31,5 +31,4 @@ class ResourceMap<T : Resource> {
     fun add(value: T) {
         map[value.location] = value
     }
-
 }

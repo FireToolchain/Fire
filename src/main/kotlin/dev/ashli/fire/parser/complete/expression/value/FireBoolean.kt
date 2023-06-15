@@ -6,15 +6,18 @@ import dev.ashli.fire.tokenizer.TokenType
 import dev.ashli.fire.tokenizer.Tokens
 
 /**
- * Represents a "this" value.
+ * Represents a Boolean primitive in Fire.
  */
-class This {
+class FireBoolean(val value: kotlin.Boolean) : FireValue() {
     companion object {
-        fun parse(tokens: Tokens): This {
+        fun parse(tokens: Tokens): FireBoolean {
             if (!tokens.hasNext()) throw MissingTokenError("No token to parse.", tokens)
             val token = tokens.next()
-            if (token.type !is TokenType.This) throw ParseTokenError("Token is not a 'this' keyword.", token)
-            return This()
+            return when (token.type) {
+                is TokenType.True -> FireBoolean(true)
+                is TokenType.False -> FireBoolean(false)
+                else -> throw ParseTokenError("Token is not a boolean.", token)
+            }
         }
     }
 }

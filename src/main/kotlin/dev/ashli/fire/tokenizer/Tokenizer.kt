@@ -89,7 +89,7 @@ sealed interface TokenType {
  *
  * @throws SyntaxError
  */
-fun tokenize(str: String, fileName: ResourceName): Tokens {
+public fun tokenize(str: String, fileName: ResourceName): Tokens {
     val list = mutableListOf<Token>()
     var line = 1
     var column = 0

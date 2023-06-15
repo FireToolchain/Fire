@@ -7,7 +7,7 @@ import dev.ashli.fire.resources.ResourceLocation
 /**
  * Denotes that a parsed Fire structure is top-level.
  */
-open class TopLevel(
+open class TopLevelResource(
     override val location: ResourceLocation,
     override val annotations: List<Annotation>
 ) : Resource, Annotated {

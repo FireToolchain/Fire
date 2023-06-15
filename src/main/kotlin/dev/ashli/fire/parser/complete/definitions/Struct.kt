@@ -1,6 +1,6 @@
 package dev.ashli.fire.parser.complete.definitions
 
-import dev.ashli.fire.parser.TopLevel
+import dev.ashli.fire.parser.TopLevelResource
 import dev.ashli.fire.parser.complete.annotations.Annotation
 import dev.ashli.fire.resources.ResourceLocation
 
@@ -8,5 +8,5 @@ import dev.ashli.fire.resources.ResourceLocation
  * Represents a Fire struct
  */
 class Struct(location: ResourceLocation, annotations: List<Annotation>) :
-    TopLevel(location, annotations) {
+    TopLevelResource(location, annotations) {
 }

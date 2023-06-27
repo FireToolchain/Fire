@@ -19,5 +19,11 @@ class FireBoolean(val value: kotlin.Boolean) : FireValue() {
                 else -> throw ParseTokenError("Token is not a boolean.", token)
             }
         }
+
+        fun canParse(tokens: Tokens): Boolean {
+            if (!tokens.hasNext()) return false
+            val token = tokens.peek().type
+            return token is TokenType.True || token is TokenType.False
+        }
     }
 }

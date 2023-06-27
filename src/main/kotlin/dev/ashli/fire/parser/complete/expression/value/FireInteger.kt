@@ -16,5 +16,11 @@ class FireInteger(val value: Int) : FireValue() {
             if (token.type !is TokenType.Int) throw ParseTokenError("Token is not an integer.", token)
             return FireInteger(token.type.num)
         }
+
+        fun canParse(tokens: Tokens): Boolean {
+            if (!tokens.hasNext()) return false
+            val token = tokens.peek().type
+            return token is TokenType.Int
+        }
     }
 }

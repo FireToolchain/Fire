@@ -16,5 +16,11 @@ class FireString(val value: String) : FireValue()  {
             if (token.type !is TokenType.String) throw ParseTokenError("Token is not a string.", token)
             return FireString(token.type.str)
         }
+
+        fun canParse(tokens: Tokens): Boolean {
+            if (!tokens.hasNext()) return false
+            val token = tokens.peek().type
+            return token is TokenType.String
+        }
     }
 }

@@ -49,5 +49,27 @@ sealed class KindlingArgument {
     class Potion(val type: String, val ticks: Int, val amplifier: Int)
     class BlockTag(val type: String, val value: String, val variable: String?)
     class Item(val nbt: String)
-    class Particle(val type: String, val settings: String) // TODO: make seperate type for settings
+    class Particle(val type: String, val settings: ParticleSettings) // TODO: make seperate type for settings
+}
+
+class ParticleSettings {
+    val amount: Int = 0
+    val spreadX: Int? = null
+    val spreadY: Int? = null
+    val motionX: Int? = null
+    val motionY: Int? = null
+    val motionZ: Int? = null
+    val roll: Int? = null
+    val size: Int? = null
+    val rgb: ParticleRGB? = null
+    val material: String? = null // should be a valid material
+    val variationColor: Int? = null // between 1-100
+    val variationMotion: Int? = null // between 1-100
+    val variationSize: Int? = null // between 1-100
+}
+
+class ParticleRGB {
+    val r: Int = 0
+    val g: Int = 0
+    val b: Int = 0
 }

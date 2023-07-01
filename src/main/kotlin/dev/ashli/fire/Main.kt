@@ -1,7 +1,6 @@
 package dev.ashli.fire
 
 import dev.ashli.fire.parser.emitter.KindlingValue
-import dev.ashli.fire.parser.emitter.emit
 
 fun main(args: Array<String>) {
 
@@ -40,7 +39,7 @@ fun main(args: Array<String>) {
         ))
     ))
 
-    val output = emit(toEmit)
+    val output = KindlingValue.emitValue(toEmit)
     println(output)
 
     return

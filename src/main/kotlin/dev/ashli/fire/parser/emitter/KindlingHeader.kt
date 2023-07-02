@@ -3,8 +3,6 @@ package dev.ashli.fire.parser.emitter
 /**
  * In Kindling, each program has a set of headers. In DF, these translate to Player Events, Entity Events,
  * Functions, or Processes.
- *
-
  * @see KindlingAction
  */
 sealed class KindlingHeader {

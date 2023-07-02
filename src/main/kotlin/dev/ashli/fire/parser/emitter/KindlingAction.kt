@@ -49,6 +49,24 @@ sealed class KindlingAction {
      */
     class Start(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
 
+    class IfPlayer(
+        val type: String,
+        val selector: String,
+        val invert: String,
+        val arguments: Array<KindlingArgument>,
+        val code: Array<KindlingAction>,
+        val elseCode: Array<KindlingAction>?
+    ) : KindlingAction()
+
+    class IfEntity(
+        val type: String,
+        val selector: String,
+        val invert: String,
+        val arguments: Array<KindlingArgument>,
+        val code: Array<KindlingAction>,
+        val elseCode: Array<KindlingAction>?
+    ) : KindlingAction()
+
 }
 /**
  * This function allows you to emit one action into a KindlingValue.
@@ -115,7 +133,48 @@ fun emitAction(self: KindlingAction): KindlingValue {
                 KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray())
             ))
         }
-
+        is KindlingAction.IfPlayer -> {
+            self.elseCode?.let {
+                return KindlingValue.List(arrayOf(
+                    KindlingValue.Identifier("if-player"),
+                    KindlingValue.Text(self.type),
+                    KindlingValue.Identifier(self.selector),
+                    KindlingValue.Identifier(self.invert),
+                    KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray()),
+                    KindlingValue.List(emitActions(self.code)),
+                    KindlingValue.List(emitActions(self.elseCode)),
+                ))
+            }
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("if-player"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Identifier(self.selector),
+                KindlingValue.Identifier(self.invert),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray()),
+                KindlingValue.List(emitActions(self.code)),
+            ))
+        }
+        is KindlingAction.IfEntity -> {
+            self.elseCode?.let {
+                return KindlingValue.List(arrayOf(
+                    KindlingValue.Identifier("if-entity"),
+                    KindlingValue.Text(self.type),
+                    KindlingValue.Identifier(self.selector),
+                    KindlingValue.Identifier(self.invert),
+                    KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray()),
+                    KindlingValue.List(emitActions(self.code)),
+                    KindlingValue.List(emitActions(self.elseCode)),
+                ))
+            }
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("if-entity"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Identifier(self.selector),
+                KindlingValue.Identifier(self.invert),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray()),
+                KindlingValue.List(emitActions(self.code)),
+            ))
+        }
     }
 }
 /**

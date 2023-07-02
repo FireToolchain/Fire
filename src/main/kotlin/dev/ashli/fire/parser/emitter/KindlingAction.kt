@@ -83,6 +83,21 @@ sealed class KindlingAction {
         val elseCode: Array<KindlingAction>?
     ) : KindlingAction()
 
+    class Repeat(
+        val type: String,
+        val subType: String,
+        val invert: String,
+        val arguments: Array<KindlingArgument>,
+        val code: Array<KindlingAction>,
+    ) : KindlingAction()
+
+    class SelectObject(
+        val type: String,
+        val subType: String,
+        val invert: String,
+        val arguments: Array<KindlingArgument>,
+    ) : KindlingAction()
+
     class Return(val value: KindlingArgument?) : KindlingAction()
     class Yield(val value: KindlingArgument) : KindlingAction()
 
@@ -91,7 +106,7 @@ sealed class KindlingAction {
  * This function allows you to emit one action into a KindlingValue.
  *
  * @param self The KindlingAction to transform into a KindlingValue.
- * @return Returns a KindlingValue, specifically a KindlingValue.List with the actions's details provided.
+ * @return Returns a KindlingValue, specifically a KindlingValue.List with the action's details provided.
  * @see KindlingValue
  */
 fun emitAction(self: KindlingAction): KindlingValue {
@@ -232,6 +247,25 @@ fun emitAction(self: KindlingAction): KindlingValue {
                 KindlingValue.List(emitActions(self.code)),
             ))
         }
+        is KindlingAction.Repeat -> {
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("repeat"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Text(self.subType),
+                KindlingValue.Identifier(self.invert),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray()),
+                KindlingValue.List(emitActions(self.code)),
+            ))
+        }
+        is KindlingAction.SelectObject -> {
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("select-object"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Text(self.subType),
+                KindlingValue.Identifier(self.invert),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray()),
+            ))
+        }
         is KindlingAction.Return -> {
             self.value?.let {
                 return KindlingValue.List(arrayOf(
@@ -258,7 +292,7 @@ fun emitAction(self: KindlingAction): KindlingValue {
  * instead of manually looping through it each time.
  *
  * @param self The KindlingActions to transform into a KindlingValue.
- * @return Returns a KindlingValue, specifically a KindlingValue.List with the actions's details provided.
+ * @return Returns a KindlingValue, specifically a KindlingValue.List with the action's details provided.
  * @see KindlingValue
  */
 fun emitActions(self: Array<KindlingAction>): Array<KindlingValue> {

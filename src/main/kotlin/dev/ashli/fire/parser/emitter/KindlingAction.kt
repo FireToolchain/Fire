@@ -67,6 +67,25 @@ sealed class KindlingAction {
         val elseCode: Array<KindlingAction>?
     ) : KindlingAction()
 
+    class IfVariable(
+        val type: String,
+        val invert: String,
+        val arguments: Array<KindlingArgument>,
+        val code: Array<KindlingAction>,
+        val elseCode: Array<KindlingAction>?
+    ) : KindlingAction()
+
+    class IfGame(
+        val type: String,
+        val invert: String,
+        val arguments: Array<KindlingArgument>,
+        val code: Array<KindlingAction>,
+        val elseCode: Array<KindlingAction>?
+    ) : KindlingAction()
+
+    class Return(val value: KindlingArgument?) : KindlingAction()
+    class Yield(val value: KindlingArgument) : KindlingAction()
+
 }
 /**
  * This function allows you to emit one action into a KindlingValue.
@@ -175,6 +194,62 @@ fun emitAction(self: KindlingAction): KindlingValue {
                 KindlingValue.List(emitActions(self.code)),
             ))
         }
+        is KindlingAction.IfVariable -> {
+            self.elseCode?.let {
+                return KindlingValue.List(arrayOf(
+                    KindlingValue.Identifier("if-var"),
+                    KindlingValue.Text(self.type),
+                    KindlingValue.Identifier(self.invert),
+                    KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray()),
+                    KindlingValue.List(emitActions(self.code)),
+                    KindlingValue.List(emitActions(self.elseCode)),
+                ))
+            }
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("if-var"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Identifier(self.invert),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray()),
+                KindlingValue.List(emitActions(self.code)),
+            ))
+        }
+        is KindlingAction.IfGame -> {
+            self.elseCode?.let {
+                return KindlingValue.List(arrayOf(
+                    KindlingValue.Identifier("if-game"),
+                    KindlingValue.Text(self.type),
+                    KindlingValue.Identifier(self.invert),
+                    KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray()),
+                    KindlingValue.List(emitActions(self.code)),
+                    KindlingValue.List(emitActions(self.elseCode)),
+                ))
+            }
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("if-game"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Identifier(self.invert),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray()),
+                KindlingValue.List(emitActions(self.code)),
+            ))
+        }
+        is KindlingAction.Return -> {
+            self.value?.let {
+                return KindlingValue.List(arrayOf(
+                    KindlingValue.Identifier("ret"),
+                    emitArgument(self.value)
+                ))
+            }
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("ret"),
+            ))
+        }
+        is KindlingAction.Yield -> {
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("yield"),
+                emitArgument(self.value)
+            ))
+        }
+
     }
 }
 /**

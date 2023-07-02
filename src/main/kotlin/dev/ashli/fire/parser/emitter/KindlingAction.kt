@@ -10,45 +10,61 @@ sealed class KindlingAction {
      * This represents a "player-action" in Kindling.
      * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
      * @param selector This represents whose receiving the action.
+     * @param arguments Arguments to the code-block.
      */
     class PlayerAction(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
     /**
      * This represents an "entity-action" in Kindling.
      * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
      * @param selector This represents whose receiving the action.
+     * @param arguments Arguments to the code-block.
      */
     class EntityAction(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
     /**
      * This represents a "game-action" in Kindling.
      * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
      * @param selector This represents whose receiving the action.
+     * @param arguments Arguments to the code-block.
      */
     class GameAction(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
     /**
      * This represents a "set-var" in Kindling.
      * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
      * @param selector This represents whose receiving the action.
+     * @param arguments Arguments to the code-block.
      */
     class SetVar(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
     /**
      * This represents a "control" in Kindling.
      * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
      * @param selector This represents whose receiving the action.
+     * @param arguments Arguments to the code-block.
      */
     class Control(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
     /**
      * This represents a "call" in Kindling.
      * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
      * @param selector This represents whose receiving the action.
+     * @param arguments Arguments to the code-block.
      */
     class Call(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
     /**
      * This represents a "start" in Kindling.
      * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
      * @param selector This represents whose receiving the action.
+     * @param arguments Arguments to the code-block.
      */
     class Start(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
 
+    /**
+     * This represents an "if-player" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param selector This represents whose receiving the action.
+     * @param invert Either "norm" or "not" depending on the inversion of the statement.
+     * @param arguments Arguments to the code-block.
+     * @param code Code to run if it is true.
+     * @param elseCode Code to run otherwise.
+     */
     class IfPlayer(
         val type: String,
         val selector: String,
@@ -57,7 +73,15 @@ sealed class KindlingAction {
         val code: Array<KindlingAction>,
         val elseCode: Array<KindlingAction>?
     ) : KindlingAction()
-
+    /**
+     * This represents an "if-entity" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param selector This represents whose receiving the action.
+     * @param invert Either "norm" or "not" depending on the inversion of the statement.
+     * @param arguments Arguments to the code-block.
+     * @param code Code to run if it is true.
+     * @param elseCode Code to run otherwise.
+     */
     class IfEntity(
         val type: String,
         val selector: String,
@@ -67,6 +91,14 @@ sealed class KindlingAction {
         val elseCode: Array<KindlingAction>?
     ) : KindlingAction()
 
+    /**
+     * This represents an "if-var" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param invert Either "norm" or "not" depending on the inversion of the statement.
+     * @param arguments Arguments to the code-block.
+     * @param code Code to run if it is true.
+     * @param elseCode Code to run otherwise.
+     */
     class IfVariable(
         val type: String,
         val invert: String,
@@ -74,7 +106,14 @@ sealed class KindlingAction {
         val code: Array<KindlingAction>,
         val elseCode: Array<KindlingAction>?
     ) : KindlingAction()
-
+    /**
+     * This represents an "if-game" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param invert Either "norm" or "not" depending on the inversion of the statement.
+     * @param arguments Arguments to the code-block.
+     * @param code Code to run if it is true.
+     * @param elseCode Code to run otherwise.
+     */
     class IfGame(
         val type: String,
         val invert: String,
@@ -82,7 +121,14 @@ sealed class KindlingAction {
         val code: Array<KindlingAction>,
         val elseCode: Array<KindlingAction>?
     ) : KindlingAction()
-
+    /**
+     * This represents a "repeat" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param subType This represents the "sub-action" of the block, normally below the "action".
+     * @param invert Either "norm" or "not" depending on the inversion of the statement.
+     * @param arguments Arguments to the code-block.
+     * @param code Code to run if it is true.
+     */
     class Repeat(
         val type: String,
         val subType: String,
@@ -90,15 +136,28 @@ sealed class KindlingAction {
         val arguments: Array<KindlingArgument>,
         val code: Array<KindlingAction>,
     ) : KindlingAction()
-
+    /**
+     * This represents a "select-object" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param subType This represents the "sub-action" of the block, normally below the "action".
+     * @param invert Either "norm" or "not" depending on the inversion of the statement.
+     * @param arguments Arguments to the code-block.
+     */
     class SelectObject(
         val type: String,
         val subType: String,
         val invert: String,
         val arguments: Array<KindlingArgument>,
     ) : KindlingAction()
-
+    /**
+     * This represents a "ret" in Kindling.
+     * @param value The value to return.
+     */
     class Return(val value: KindlingArgument?) : KindlingAction()
+    /**
+     * This represents a "yield" in Kindling.
+     * @param value The value to yield with.
+     */
     class Yield(val value: KindlingArgument) : KindlingAction()
 
 }

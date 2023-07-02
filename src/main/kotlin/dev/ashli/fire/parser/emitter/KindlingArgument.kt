@@ -43,13 +43,13 @@ sealed class KindlingArgument {
     /**
      * This represents the Sound value.
      * @param type The sound to play.
-     * @param variant If it is a sound with multiple subsound, it's which sound to play.
+     * @param variant If it is a sound with multiple sub-sounds, it's which sound to play.
      * @param pitch The pitch of the sound.
      * @param volume The volume of the sound.
      */
     class Sound(val type: String, val variant: String?, val pitch: Float, val volume: Float) : KindlingArgument()
     /**
-     * This represents the Game Value value.
+     * This represents the Game Value.
      * @param type The game value to track.
      * @param selector Who are we tracking with this? Only applies to certain values
      */
@@ -98,6 +98,7 @@ sealed class KindlingArgument {
      * @param index The index to get.
      */
     class GetParam(val index: Int) : KindlingArgument()
+
     /**
      * The last returned result of a function.
      */
@@ -151,6 +152,15 @@ fun emitArgument(value: KindlingArgument): KindlingValue {
             ))
         }
         is KindlingArgument.Sound -> {
+            value.variant?.let {
+                return KindlingValue.List(arrayOf(
+                    KindlingValue.Identifier("sound"),
+                    KindlingValue.Text(value.type),
+                    KindlingValue.Text(value.variant),
+                    KindlingValue.Number(value.pitch.toDouble()),
+                    KindlingValue.Number(value.volume.toDouble()),
+                ))
+            }
             KindlingValue.List(arrayOf(
                 KindlingValue.Identifier("sound"),
                 KindlingValue.Identifier(value.type),
@@ -279,13 +289,11 @@ fun emitArgument(value: KindlingArgument): KindlingValue {
                 ))
             }
             if(value.settings.rgb != null) {
-                val i = 256.0.pow(2.0) * value.settings.rgb.r + 256 * value.settings.rgb.g + value.settings.rgb.b;
+                val i = 256.0.pow(2.0) * value.settings.rgb.r + 256 * value.settings.rgb.g + value.settings.rgb.b
 
                 list.value += KindlingValue.List(arrayOf(
                     KindlingValue.Identifier("color"),
-                    KindlingValue.Number(
-                        i.toDouble()
-                    )
+                    KindlingValue.Number(i)
                 ))
             }
             if(value.settings.material != null) {

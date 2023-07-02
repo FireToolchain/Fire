@@ -2,26 +2,114 @@ package dev.ashli.fire.parser.emitter
 
 import kotlin.math.pow
 
-
+/**
+ * Each item in this class represents an argument to an action in Kindling, or an argument to an action in DF.
+ * @see KindlingAction
+ */
 sealed class KindlingArgument {
+    /**
+     * This represents the Text value.
+     * @param value The value of the text.
+     */
     class Text(val value: String) : KindlingArgument()
+    /**
+     * This represents the Number value.
+     * @param value The value of the number.
+     */
     class Number(val value: Float) : KindlingArgument()
+    /**
+     * This represents the Location value.
+     * @param x X coordinate.
+     * @param y X coordinate.
+     * @param z X coordinate.
+     * @param pitch Pitch coordinate.
+     * @param yaw Yaw coordinate.
+     */
     class Location(val x: Float, val y: Float, val z: Float, val pitch: Float, val yaw: Float) : KindlingArgument()
+    /**
+     * This represents the Vector value.
+     * @param x X coordinate.
+     * @param y X coordinate.
+     * @param z X coordinate.
+     */
     class Vector(val x: Float, val y: Float, val z: Float) : KindlingArgument()
+    /**
+     * This represents the Potion value.
+     * @param type The effect that the potion gives.
+     * @param ticks How long the potion lasts in ticks.
+     * @param amplifier The amplifier of the potion.
+     */
     class Potion(val type: String, val ticks: Int, val amplifier: Int) : KindlingArgument()
+    /**
+     * This represents the Sound value.
+     * @param type The sound to play.
+     * @param variant If it is a sound with multiple subsound, it's which sound to play.
+     * @param pitch The pitch of the sound.
+     * @param volume The volume of the sound.
+     */
     class Sound(val type: String, val variant: String?, val pitch: Float, val volume: Float) : KindlingArgument()
+    /**
+     * This represents the Game Value value.
+     * @param type The game value to track.
+     * @param selector Who are we tracking with this? Only applies to certain values
+     */
     class GameValue(val type: String, val selector: String) : KindlingArgument()
+    /**
+     * This represents a Block Tag argument.
+     * @param type The block tag to track.
+     * @param value Represents the option of the block tag.
+     * @param variable If a block tag accepts a variable - put it here.
+     * @see KindlingArgument
+     */
     class BlockTag(val type: String, val value: String, val variable: KindlingArgument?) : KindlingArgument()
+    /**
+     * This represents an Item.
+     * @param nbt The NBT to use for the item.
+     */
     class Item(val nbt: String) : KindlingArgument()
-    class Particle(val type: String, val settings: ParticleSettings) : KindlingArgument() // TODO: make seperate type for settings
+    /**
+     * This represents a Particle value.
+     * @param type The type of particle to use.
+     * @param settings The settings of the particle.
+     */
+    class Particle(val type: String, val settings: ParticleSettings) : KindlingArgument()
+    /**
+     * A variable local to the function.
+     * @param name Name of the variable.
+     */
     class ScopedVariable(val name: String) : KindlingArgument()
+    /**
+     * A variable local to the thread.
+     * @param name Name of the variable.
+     */
     class LocalVariable(val name: String) : KindlingArgument()
+    /**
+     * A variable local to the current game running.
+     * @param name Name of the variable.
+     */
     class GlobalVariable(val name: String) : KindlingArgument()
+    /**
+     * A variable that persists throughout time.
+     * @param name Name of the variable.
+     */
     class SaveVariable(val name: String) : KindlingArgument()
+    /**
+     * The result of a function parameter.
+     * @param index The index to get.
+     */
     class GetParam(val index: Int) : KindlingArgument()
+    /**
+     * The last returned result of a function.
+     */
     class ReturnedValue : KindlingArgument()
 }
 
+/**
+ * This function is responsible for transforming KindlingArguments into KindlingValues.
+ * @param value The value to transform.
+ * @return The Kindling representation of the argument.
+ * @see KindlingValue
+ */
 fun emitArgument(value: KindlingArgument): KindlingValue {
     return when(value) {
         is KindlingArgument.Text -> {
@@ -133,7 +221,7 @@ fun emitArgument(value: KindlingArgument): KindlingValue {
             ))
         }
         is KindlingArgument.Particle -> {
-            var list = KindlingValue.List(arrayOf(
+            val list = KindlingValue.List(arrayOf(
                 KindlingValue.Text(value.type)
             ))
             list.value += KindlingValue.List(arrayOf(

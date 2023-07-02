@@ -9,15 +9,46 @@ sealed class KindlingAction {
     /**
      * This represents a "player-action" in Kindling.
      * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
-     * @param selector This represents whose recieving the action.
+     * @param selector This represents whose receiving the action.
      */
     class PlayerAction(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
     /**
      * This represents an "entity-action" in Kindling.
      * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
-     * @param selector This represents whose recieving the action.
+     * @param selector This represents whose receiving the action.
      */
     class EntityAction(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
+    /**
+     * This represents a "game-action" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param selector This represents whose receiving the action.
+     */
+    class GameAction(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
+    /**
+     * This represents a "set-var" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param selector This represents whose receiving the action.
+     */
+    class SetVar(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
+    /**
+     * This represents a "control" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param selector This represents whose receiving the action.
+     */
+    class Control(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
+    /**
+     * This represents a "call" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param selector This represents whose receiving the action.
+     */
+    class Call(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
+    /**
+     * This represents a "start" in Kindling.
+     * @param type This represents the "action" of the block, for example, "SendMessage" on a Player Action.
+     * @param selector This represents whose receiving the action.
+     */
+    class Start(val type: String, val selector: String, val arguments: Array<KindlingArgument>) : KindlingAction()
+
 }
 /**
  * This function allows you to emit one action into a KindlingValue.
@@ -44,6 +75,47 @@ fun emitAction(self: KindlingAction): KindlingValue {
                 KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray())
             ))
         }
+        is KindlingAction.GameAction -> {
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("game-action"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Text(self.selector),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray())
+            ))
+        }
+        is KindlingAction.SetVar -> {
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("set-var"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Text(self.selector),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray())
+            ))
+        }
+        is KindlingAction.Control -> {
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("control"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Text(self.selector),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray())
+            ))
+        }
+        is KindlingAction.Call -> {
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("call"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Text(self.selector),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray())
+            ))
+        }
+        is KindlingAction.Start -> {
+            KindlingValue.List(arrayOf(
+                KindlingValue.Identifier("start"),
+                KindlingValue.Text(self.type),
+                KindlingValue.Text(self.selector),
+                KindlingValue.List(self.arguments.map { x -> emitArgument(x) }.toTypedArray())
+            ))
+        }
+
     }
 }
 /**

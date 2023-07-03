@@ -5,7 +5,7 @@ import dev.ashli.fire.resources.ResourceName
 /**
  * Represents a list of tokens.
  */
-class Tokens(private val list: Array<Token>, private val fileName: ResourceName) : Iterator<Token> {
+class Tokens(val list: Array<Token>, private val fileName: ResourceName) : Iterator<Token> {
     private var index = 0
     private var lastLine = 0
     private var lastColumn = 0

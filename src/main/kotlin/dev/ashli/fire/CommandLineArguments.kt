@@ -12,7 +12,9 @@ class CommandLineArguments {
      * TODO: The `contains` doesn't seem to work properly for some reason. Need to fix.
      */
     fun hasArgument(arg: CLIArg): Boolean {
-        return arguments.contains(arg)
+        val cmp1 = "${arguments.map { x -> x.toString() }}"
+        val cmp2 = "$arg"
+        return cmp1.contains(cmp2)
     }
 
     /**
@@ -33,15 +35,7 @@ class CommandLineArguments {
     override fun toString(): String {
         var out = "Flags{"
         for(argument in arguments) {
-            out = when(argument) {
-                is CLIArg.Verbose -> { "$out,verbose" }
-                is CLIArg.Build -> { "$out,build" }
-                is CLIArg.Emit -> { "$out,emit(${argument.emit})" }
-                is CLIArg.Recode -> { "$out,recode" }
-                is CLIArg.CodeClient -> { "$out,code-client" }
-                is CLIArg.Help -> { "$out,help" }
-                else -> { "$out,error" }
-            }
+            out = "$out$argument;"
         }
         out = "$out}"
         return out
@@ -52,6 +46,17 @@ class CommandLineArguments {
  * Represents a single argument on the command line.
  */
 open class CLIArg {
+    override fun toString(): String {
+        return when(this) {
+            is CLIArg.Verbose -> { "verbose" }
+            is CLIArg.Build -> { "build" }
+            is CLIArg.Emit -> { "emit(${this.emit})" }
+            is CLIArg.Recode -> { "recode" }
+            is CLIArg.CodeClient -> { "code-client" }
+            is CLIArg.Help -> { "help" }
+            else -> { "error" }
+        }
+    }
     /**
      * Represents the `-h` or `--help` option.
      */

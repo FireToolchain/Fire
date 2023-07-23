@@ -60,11 +60,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    println(
-        arguments.toString()
-    )
-
-    if(arguments.hasArgument(CLIArg.Build())) {
+    if(!arguments.hasArgument(CLIArg.Build())) {
         println("Error: Expected the subcommand `build`.")
         return
     }
@@ -113,17 +109,13 @@ fun processScripts(arguments: CommandLineArguments) {
     val root = File("./fire/")
     val files = walkScripts(root)
     val program = Program(files, arguments)
-    println("$program")
 }
 
 fun walkScripts(root: File): Array<File> {
     var files: Array<File> = arrayOf()
     root.walkTopDown().forEach { file ->
         if (file.isFile) {
-            println("It's a file! $file")
             files = files.plus(file)
-        } else {
-            println("It's a dir! $file")
         }
     }
     return files

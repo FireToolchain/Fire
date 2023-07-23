@@ -9,7 +9,6 @@ class CommandLineArguments {
     /**
      * Check if the CLI has an argument.
      * @param arg Argument to check if it exists or not.
-     * TODO: The `contains` doesn't seem to work properly for some reason. Need to fix.
      */
     fun hasArgument(arg: CLIArg): Boolean {
         val cmp1 = "${arguments.map { x -> x.toString() }}"
@@ -48,12 +47,12 @@ class CommandLineArguments {
 open class CLIArg {
     override fun toString(): String {
         return when(this) {
-            is CLIArg.Verbose -> { "verbose" }
-            is CLIArg.Build -> { "build" }
-            is CLIArg.Emit -> { "emit(${this.emit})" }
-            is CLIArg.Recode -> { "recode" }
-            is CLIArg.CodeClient -> { "code-client" }
-            is CLIArg.Help -> { "help" }
+            is Verbose -> { "verbose" }
+            is Build -> { "build" }
+            is Emit -> { "emit(${this.emit})" }
+            is Recode -> { "recode" }
+            is CodeClient -> { "code-client" }
+            is Help -> { "help" }
             else -> { "error" }
         }
     }

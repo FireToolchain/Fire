@@ -3,19 +3,25 @@ package dev.ashli.fire
 import dev.ashli.fire.resources.ResourceName
 import dev.ashli.fire.tokenizer.tokenize
 
+/**
+ * Main function, entry point of Kindling.
+ * This function manages CLI arguments.
+ * @param args The command line arguments.
+ */
 fun main(args: Array<String>) {
     val arguments = CommandLineArguments()
     val iter = args.iterator()
+    // This loop goes through each argument in `args` and parses it into a `CommandLineArguments()`
     for(arg in iter) {
         when(arg) {
-            "-h" -> {
+            "-h", "--help" -> {
                 displayHelp()
                 return
             }
-            "-c" -> {
+            "-c", "--code-client" -> {
                 arguments.addArgument(CLIArg.CodeClient())
             }
-            "-r" -> {
+            "-r", "--recode" -> {
                 arguments.addArgument(CLIArg.Recode())
             }
             "--emit" -> {

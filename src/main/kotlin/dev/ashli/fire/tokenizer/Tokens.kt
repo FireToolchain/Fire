@@ -33,6 +33,13 @@ class Tokens(val list: Array<Token>, private val fileName: ResourceName) : Itera
     override fun hasNext() = index < list.size
 
     /**
+     * Checks if the iterator has a certain amount of tokens remaining.
+     * @param amount How many tokens need to remain
+     * @return True if the tokens are there
+     */
+    fun hasRemaining(amount: Int) = (index + amount) < list.size
+
+    /**
      * @return The token at the specified input index of the iterator.
      * @throws IndexOutOfBoundsException If index >= size()
      */

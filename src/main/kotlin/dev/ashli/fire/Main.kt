@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 }
 
 // test
-
+// test 2
 fun displayHelp() {
     println("""
 Usage: fire [options] input

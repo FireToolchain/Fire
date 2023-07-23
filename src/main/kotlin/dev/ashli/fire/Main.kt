@@ -16,6 +16,8 @@ fun main(args: Array<String>) {
     }
 }
 
+// test
+
 fun displayHelp() {
     println("""
 Usage: fire [options] input

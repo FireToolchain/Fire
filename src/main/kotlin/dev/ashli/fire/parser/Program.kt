@@ -15,6 +15,8 @@ class Program(files: Array<File>, arguments: CommandLineArguments) {
     init {
         for (f in files) {
             val tokens = tokenize(f.readText(), ResourceName(f.nameWithoutExtension))
+
+            // If emitting tokens is enabled, write the tokens to `stdout`.
             if(arguments.hasArgument(CLIArg.Emit("tokens"))) {
                 println("Printing token from: $f (Enable with flag `--emit tokens`, remove this argument to disable.)")
                 println(tokens.list.joinToString("\n") {

@@ -68,6 +68,9 @@ fun main(args: Array<String>) {
     processScripts(arguments)
 }
 
+/**
+ * This function displays the help menu.
+ */
 fun displayHelp() {
     println("""
 Usage: java -jar fire.jar [options] [input]
@@ -92,6 +95,10 @@ Input:
 """)
 
 }
+
+/**
+ * This function can be called with `--test (token-test)` command line arguments.
+ */
 fun tokenTest() {
     println(
         tokenize(
@@ -105,12 +112,20 @@ fun tokenTest() {
         ).list.joinToString("\n") { it.type.toString() })
 }
 
+/**
+ * This function allows you to process the scripts in the `./fire` directory.
+ * @param arguments These should be the same CLI arguments from the `main` function.
+ */
 fun processScripts(arguments: CommandLineArguments) {
-    val root = File("./fire/")
+    val root = File("./fire/") // NOTE: `/fire` directory is temporary for developer debugging, it will be `src` in the future.
     val files = walkScripts(root)
     val program = Program(files, arguments)
 }
 
+/**
+ * This function walks a directory, collecting each file inside the directory.
+ * @param root The base directory to start with.
+ */
 fun walkScripts(root: File): Array<File> {
     var files: Array<File> = arrayOf()
     root.walkTopDown().forEach { file ->

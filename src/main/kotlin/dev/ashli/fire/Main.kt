@@ -1,11 +1,10 @@
 package dev.ashli.fire
 
-import dev.ashli.fire.parser.emitter.*
 import dev.ashli.fire.resources.ResourceName
 import dev.ashli.fire.tokenizer.tokenize
 
 fun main(args: Array<String>) {
-    val arguments = CommandLineArguments();
+    val arguments = CommandLineArguments()
     val iter = args.iterator()
     for(arg in iter) {
         when(arg) {

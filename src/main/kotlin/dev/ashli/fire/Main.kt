@@ -1,7 +1,9 @@
 package dev.ashli.fire
 
+import dev.ashli.fire.parser.Program
 import dev.ashli.fire.resources.ResourceName
 import dev.ashli.fire.tokenizer.tokenize
+import java.io.File
 
 /**
  * Main function, entry point of Kindling.
@@ -27,7 +29,7 @@ fun main(args: Array<String>) {
             "--emit" -> {
                 val next = iter.next()
                 if(next == "tokens" || next == "ast1" || next == "ast2" || next == "kindling") {
-                    arguments.addArgument(CLIArg.Emit("next"))
+                    arguments.addArgument(CLIArg.Emit(next))
                 } else {
                     println("Error: Invalid emit target. Expected one of: `tokens`, `ast1`, `ast2`, `kindling`.")
                     return
@@ -47,6 +49,9 @@ fun main(args: Array<String>) {
                 }
                 return
             }
+            "build" -> {
+                arguments.addArgument(CLIArg.Build())
+            }
             else -> {
                 println("Invalid option `$arg`!")
                 displayHelp()
@@ -54,6 +59,17 @@ fun main(args: Array<String>) {
             }
         }
     }
+
+    println(
+        arguments.toString()
+    )
+
+    if(arguments.hasArgument(CLIArg.Build())) {
+        println("Error: Expected the subcommand `build`.")
+        return
+    }
+
+    processScripts(arguments)
 }
 
 fun displayHelp() {
@@ -75,7 +91,7 @@ Options:
                          Run a testing function. (Temporary for developers)
    
 Input:
-    run                  Run the current Fire directory. Reads from `fire/`
+    build                Run the current Fire directory. Reads from `fire/`
     
 """)
 
@@ -91,4 +107,24 @@ fun tokenTest() {
         }
     """, ResourceName("f.fire")
         ).list.joinToString("\n") { it.type.toString() })
+}
+
+fun processScripts(arguments: CommandLineArguments) {
+    val root = File("./fire/")
+    val files = walkScripts(root)
+    val program = Program(files, arguments)
+    println("$program")
+}
+
+fun walkScripts(root: File): Array<File> {
+    var files: Array<File> = arrayOf()
+    root.walkTopDown().forEach { file ->
+        if (file.isFile) {
+            println("It's a file! $file")
+            files = files.plus(file)
+        } else {
+            println("It's a dir! $file")
+        }
+    }
+    return files
 }

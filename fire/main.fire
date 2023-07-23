@@ -1,0 +1,3 @@
+fn main() {
+    let! spawnLocation = Loc::new(25, 100, 25);
+}

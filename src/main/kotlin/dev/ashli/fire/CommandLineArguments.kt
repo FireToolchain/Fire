@@ -4,11 +4,12 @@ package dev.ashli.fire
  * This class represents a list of command line arguments.
  */
 class CommandLineArguments {
-    private val arguments: Array<CLIArg> = arrayOf()
+    private var arguments: Array<CLIArg> = arrayOf()
 
     /**
      * Check if the CLI has an argument.
      * @param arg Argument to check if it exists or not.
+     * TODO: The `contains` doesn't seem to work properly for some reason. Need to fix.
      */
     fun hasArgument(arg: CLIArg): Boolean {
         return arguments.contains(arg)
@@ -21,8 +22,29 @@ class CommandLineArguments {
      */
     fun addArgument(arg: CLIArg) {
         if(!arguments.contains(arg)) {
-            arguments.plus(arg)
+            arguments = arguments.plus(arg)
         }
+    }
+
+    /**
+     * Converts the set of arguments to a string.
+     * @return String it was transformed into.
+     */
+    override fun toString(): String {
+        var out = "Flags{"
+        for(argument in arguments) {
+            out = when(argument) {
+                is CLIArg.Verbose -> { "$out,verbose" }
+                is CLIArg.Build -> { "$out,build" }
+                is CLIArg.Emit -> { "$out,emit(${argument.emit})" }
+                is CLIArg.Recode -> { "$out,recode" }
+                is CLIArg.CodeClient -> { "$out,code-client" }
+                is CLIArg.Help -> { "$out,help" }
+                else -> { "$out,error" }
+            }
+        }
+        out = "$out}"
+        return out
     }
 }
 
@@ -46,15 +68,15 @@ open class CLIArg {
     class Recode : CLIArg()
 
     /**
-     * Represents the `run` input.
+     * Represents the `build` input.
      */
-    class Run : CLIArg()
+    class Build : CLIArg()
 
     /**
      * Represents the `--emit` option.
      * @param emit Must be one of the following: `tokens`, `ast1`, `ast2`, `kindling`
      */
-    class Emit(private val emit: String) : CLIArg()
+    class Emit(val emit: String) : CLIArg()
 
     /**
      * Represents the `--verbose` option.
